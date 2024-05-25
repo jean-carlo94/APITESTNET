@@ -2,12 +2,15 @@
 
 namespace APITEST.Common.Interfaces
 {
-    public interface ICommonService<T, TI, TU>
+    public interface ICommonService<T, TIN, TUP>
     {
+        public List<string> Errors { get; }
         Task<IEnumerable<T>> FindAll();
-        Task<T> FindOneById(int id);
-        Task<T> CreateUser(TI user);
-        Task<T> UpdateUser(int id, TU user);
-        Task<bool> DeleteUserAsync(int id);
+        Task<T> FindById(int id);
+        Task<T> Create(TIN user);
+        Task<T> Update(int id, TUP user);
+        Task<T> Delete(int id);
+        bool Validate(TIN dto);
+        bool Validate(TUP dto);
     }
 }

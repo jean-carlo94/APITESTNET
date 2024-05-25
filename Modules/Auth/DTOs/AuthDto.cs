@@ -1,10 +1,11 @@
-﻿namespace APITEST.Modules.Users.DTOs
+﻿namespace APITEST.Modules.Auth.DTOs
 {
-    public class UserUpdateDto
+    public class AuthDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+
+        public string Token { get; set; }
     }
 }

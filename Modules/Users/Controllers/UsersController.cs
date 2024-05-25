@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using APITEST.Data;
-using APITEST.Models;
 using APITEST.Modules.Users.DTOs;
 using FluentValidation;
 using APITEST.Common.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APITEST.Modules.Users.Controllers
 {
@@ -12,14 +10,14 @@ namespace APITEST.Modules.Users.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IValidator<UserInserDto> _userInsertValidator;
+        private readonly IValidator<UserInsertDto> _userInsertValidator;
         private readonly IValidator<UserUpdateDto> _userUpdateValidator;
-        private readonly ICommonService<UserDto, UserInserDto, UserUpdateDto> _userService;
+        private readonly ICommonService<UserDto, UserInsertDto, UserUpdateDto> _userService;
 
         public UsersController(
-            IValidator<UserInserDto> userInsertValidator,
+            IValidator<UserInsertDto> userInsertValidator,
             IValidator<UserUpdateDto> userUpdateValidator,
-            ICommonService<UserDto, UserInserDto, UserUpdateDto> userService
+            [FromKeyedServices("userService")] ICommonService<UserDto, UserInsertDto, UserUpdateDto> userService
          )
         {
             _userInsertValidator = userInsertValidator;
@@ -29,12 +27,14 @@ namespace APITEST.Modules.Users.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Authorize]
         public async Task<IEnumerable<UserDto>> GetUsers() => await _userService.FindAll();
 
         // GET: api/Users/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<UserDto>> GetUser(int id) {
-            var user = await _userService.FindOneById(id);
+            var user = await _userService.FindById(id);
 
             return user == null ? 
                         NotFound() 
@@ -45,7 +45,8 @@ namespace APITEST.Modules.Users.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserDto>> CreateUser(UserInserDto userInsertDto)
+        [Authorize]
+        public async Task<ActionResult<UserDto>> CreateUser(UserInsertDto userInsertDto)
         {
             var validationResult = await _userInsertValidator.ValidateAsync(userInsertDto);
 
@@ -53,7 +54,12 @@ namespace APITEST.Modules.Users.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var user = await _userService.CreateUser(userInsertDto);
+            if (!_userService.Validate(userInsertDto))
+            {
+                return BadRequest(_userService.Errors);
+            }
+
+            var user = await _userService.Create(userInsertDto);
 
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
@@ -62,6 +68,7 @@ namespace APITEST.Modules.Users.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [HttpPatch("{id}")]
+        [Authorize]
         public async Task<ActionResult<UserDto>> UpdateUser(int id, UserUpdateDto userUpdateDto)
         {
             var validationResult = await _userUpdateValidator.ValidateAsync(userUpdateDto);
@@ -71,7 +78,12 @@ namespace APITEST.Modules.Users.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var user = await _userService.UpdateUser(id, userUpdateDto);
+            var user = await _userService.Update(id, userUpdateDto);
+
+            if (!_userService.Validate(userUpdateDto))
+            {
+                return BadRequest(_userService.Errors);
+            }
 
             return user == null ?
                         NotFound()
@@ -81,11 +93,12 @@ namespace APITEST.Modules.Users.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> DeleteUser(int id)
         {
-            var delete = await _userService.DeleteUserAsync(id);
+            var delete = await _userService.Delete(id);
 
-            return !delete ? NotFound() : NoContent();
+            return delete == null ? NotFound() : NoContent();
         }
     }
 }

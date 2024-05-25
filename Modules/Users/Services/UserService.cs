@@ -1,115 +1,124 @@
 ﻿using APITEST.Common.Interfaces;
-using APITEST.Data;
 using APITEST.Models;
 using APITEST.Modules.Users.DTOs;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace APITEST.Modules.Users.Services
 {
-    public class UserService : ICommonService<UserDto, UserInserDto, UserUpdateDto>
+    public class UserService: ICommonService<UserDto, UserInsertDto, UserUpdateDto>
     {
-        private AppDbContext _context;
-        public UserService(AppDbContext context) { 
-            _context = context;
+        private readonly IRepository<User> _userRepository;
+        private readonly IMapper _mapper;
+        public List<string> Errors { get; }
+
+        public UserService(
+            IRepository<User> userRepository,
+            IMapper mapper
+        ) { 
+            _userRepository = userRepository;
+            _mapper = mapper;
+            Errors = new List<string>();
         }
         public async Task<IEnumerable<UserDto>> FindAll()
         {
-            var users = await _context.Users.Select(user => new UserDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-            }).ToListAsync();
+            var users = await _userRepository.GetAll();
 
-            return users;
+            return users.Select(user => _mapper.Map<UserDto>(user));
         }
 
-        public async Task<UserDto> FindOneById(int id)
+        public async Task<UserDto> FindById(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetById(id);
 
             if (user != null)
             {
-                var userDto = new UserDto()
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Email = user.Email,
-                };
-
+                var userDto = _mapper.Map<UserDto>(user);
                 return userDto;
             }
 
             return null;
         }
 
-        public async Task<UserDto> CreateUser(UserInserDto userInsertDto)
+        public async Task<UserDto> Create(UserInsertDto userInsertDto)
         {
-            var user = new User()
-            {
-                Name = userInsertDto.Name,
-                Email = userInsertDto.Email,
-                Password = userInsertDto.Password,
-            };
+            var user = _mapper.Map<User>(userInsertDto);
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _userRepository.Create(user);
+            await _userRepository.Save();
 
-            var userDto = new UserDto()
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-            };
-
+            var userDto = _mapper.Map<UserDto>(user);
             return userDto;
         }
-        public async Task<UserDto> UpdateUser(int id, UserUpdateDto userUpdateDto)
+        public async Task<UserDto> Update(int id, UserUpdateDto userUpdateDto)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetById(id);
 
             if (user == null)
             {
                 return null;
             }
 
-            user.Name = userUpdateDto.Name;
-            user.Email = userUpdateDto.Email;
-            user.Password = userUpdateDto.Password;
+            user = _mapper.Map<UserUpdateDto, User>(userUpdateDto, user);
 
-            _context.Entry(user).State = EntityState.Modified;
+            _userRepository.Update(user);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _userRepository.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
                 return null;
             }
 
-            var userDto = new UserDto()
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-            };
-
+            var userDto = _mapper.Map<UserDto>(user);
             return userDto;
         }
 
-        public async Task<Boolean> DeleteUserAsync(int id)
+        public async Task<UserDto> Delete(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetById(id);
 
             if (user == null)
             {
-                return false;
+                return null;
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            _userRepository.Delete(user);
+            await _userRepository.Save();
 
+            var userDto = _mapper.Map<UserDto>(user);
+            return userDto;
+        }
+
+        public bool Validate(UserInsertDto userInserDto)
+        {
+            if (
+                _userRepository.Search(
+                    user => user.Email == userInserDto.Email
+                )
+                .Count() > 0 
+            )
+            {
+                Errors.Add("El email ya ha sido utilizado");
+                return false;
+            }
+            return true;
+        }
+
+        public bool Validate(UserUpdateDto userUpdateDto)
+        {
+            if (_userRepository.Search(
+                user => user.Email == userUpdateDto.Email 
+                && userUpdateDto.Id != user.Id                
+                )
+                .Count() > 0
+            )
+            {
+                Errors.Add("El email ya ha sido utilizado");
+                return false;
+            }
             return true;
         }
 

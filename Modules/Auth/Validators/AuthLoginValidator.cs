@@ -1,15 +1,11 @@
-﻿using APITEST.Modules.Users.DTOs;
+﻿using APITEST.Modules.Auth.DTOs;
 using FluentValidation;
 
-namespace APITEST.Modules.Users.Validators
+namespace APITEST.Modules.Auth.Validators
 {
-    public class UserInsertValidator: AbstractValidator<UserInsertDto>
+    public class AuthLoginValidator: AbstractValidator<AuthLoginDto>
     {
-        public UserInsertValidator() {
-            RuleFor(x => x.Name)
-                .NotEmpty()
-                .Length(1, 50);
-
+        public AuthLoginValidator() {
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .EmailAddress();
