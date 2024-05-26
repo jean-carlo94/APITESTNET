@@ -6,6 +6,11 @@ using APITEST.Modules.Auth.DTOs;
 using APITEST.Modules.Auth.Interfaces;
 using APITEST.Modules.Auth.Services;
 using APITEST.Modules.Auth.Validators;
+using APITEST.Modules.ProductCategories.Validators;
+using APITEST.Modules.ProductsCategory.Automappers;
+using APITEST.Modules.ProductsCategory.DTOs;
+using APITEST.Modules.ProductsCategory.Repository;
+using APITEST.Modules.ProductsCategory.Services;
 using APITEST.Modules.Users.Automappers;
 using APITEST.Modules.Users.DTOs;
 using APITEST.Modules.Users.Repository;
@@ -50,16 +55,21 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IValidator<UserInsertDto>, UserInsertValidator>();
 builder.Services.AddScoped<IValidator<UserUpdateDto>, UserUpdateValidator>();
 builder.Services.AddScoped<IValidator<AuthLoginDto>, AuthLoginValidator>();
+builder.Services.AddScoped<IValidator<ProductCategoryInsertDto>, ProductCategoryInsertValidator>();
+builder.Services.AddScoped<IValidator<ProductCategoryUpdateDto>, ProductCategoryUpdateValidator>();
 
 //Mappers
 builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddAutoMapper(typeof(AuthMappingProfile));
+builder.Services.AddAutoMapper(typeof(ProductCategoriesMappingProfile));
 
 //Services
 builder.Services.AddKeyedScoped<ICommonService<UserDto, UserInsertDto, UserUpdateDto>, UserService>("userService");
+builder.Services.AddKeyedScoped<ICommonService<ProductCategoryDto, ProductCategoryInsertDto, ProductCategoryUpdateDto>, ProductCategoryService>("productCategoryService");
 
 //Repository
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
+builder.Services.AddScoped<IRepository<ProductCategory>, ProductCategoryRepository>();
 
 //Controller
 builder.Services.AddControllers();

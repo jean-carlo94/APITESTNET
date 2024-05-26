@@ -12,6 +12,14 @@ namespace APITEST.Modules.Users.Automappers
             return PasswordHash.Hash(sourceMember);
         }
     }
+
+    public class EmailToLower : IValueConverter<string, string>
+    {
+        public string Convert(string sourceMember, ResolutionContext context)
+        {
+            return sourceMember.ToLower();
+        }
+    }
     public class UserMappingProfile : Profile
     {
         public UserMappingProfile()
@@ -19,6 +27,9 @@ namespace APITEST.Modules.Users.Automappers
             CreateMap<UserInsertDto, User>()
                 .ForMember(user => user.Password,
                             dto => dto.ConvertUsing(new PasswordToHashConverter(), dto => dto.Password)
+                )
+                .ForMember(user => user.Email,
+                            dto => dto.ConvertUsing(new EmailToLower(), dto => dto.Email)
                 );
 
             CreateMap<User, UserDto>();
@@ -26,6 +37,9 @@ namespace APITEST.Modules.Users.Automappers
             CreateMap<UserUpdateDto, User>()
                 .ForMember(user => user.Password,
                             dto => dto.ConvertUsing(new PasswordToHashConverter(), dto => dto.Password)
+                )
+                .ForMember(user => user.Email,
+                            dto => dto.ConvertUsing(new EmailToLower(), dto => dto.Email)
                 );
         }
     }

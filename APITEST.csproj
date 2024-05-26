@@ -24,4 +24,26 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="Modules\Incomings\Automappers\" />
+    <Folder Include="Modules\Incomings\Controllers\" />
+    <Folder Include="Modules\Incomings\DTOs\" />
+    <Folder Include="Modules\Incomings\Repository\" />
+    <Folder Include="Modules\Incomings\Services\" />
+    <Folder Include="Modules\Incomings\Validators\" />
+    <Folder Include="Modules\Outgoings\Automappers\" />
+    <Folder Include="Modules\Outgoings\Controllers\" />
+    <Folder Include="Modules\Outgoings\DTOs\" />
+    <Folder Include="Modules\Outgoings\Repository\" />
+    <Folder Include="Modules\Outgoings\Services\" />
+    <Folder Include="Modules\Outgoings\Validators\" />
+    <Folder Include="Modules\Products\Automappers\" />
+    <Folder Include="Modules\Products\Controllers\" />
+    <Folder Include="Modules\Products\DTOs\" />
+    <Folder Include="Modules\Products\Repository\" />
+    <Folder Include="Modules\Products\Services\" />
+    <Folder Include="Modules\Products\Validators\" />
+  </ItemGroup>
+
 </Project>
