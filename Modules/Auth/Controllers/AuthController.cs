@@ -1,14 +1,9 @@
-﻿using APITEST.Common.Interfaces;
-using APITEST.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using FluentValidation;
 using APITEST.Modules.Auth.DTOs;
 using APITEST.Modules.Auth.Interfaces;
-using APITEST.Modules.Users.DTOs;
-using APITEST.Modules.Users.Services;
-using APITEST.Modules.Users.Validators;
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace APITEST.Modules.Auth.Controllers
 {
@@ -19,19 +14,16 @@ namespace APITEST.Modules.Auth.Controllers
         private readonly IValidator<AuthLoginDto> _authLoginValidator;
         private readonly IValidator<AuthRegisterDto> _authRegisterValidator;
         private readonly IAuthService _authService;
-        private readonly ICommonService<UserDto, UserInsertDto, UserUpdateDto> _userService;
 
         public AuthController(
             IValidator<AuthLoginDto> authLoginValidator,
             IValidator<AuthRegisterDto> authRegisterValidator,
-            IAuthService authService,
-            [FromKeyedServices("userService")] ICommonService<UserDto, UserInsertDto, UserUpdateDto> userService
+            IAuthService authService
         ) 
         { 
             _authLoginValidator = authLoginValidator;
             _authRegisterValidator = authRegisterValidator;
             _authService = authService;
-            _userService = userService;
         }
 
         [HttpPost("Register")]
@@ -46,7 +38,7 @@ namespace APITEST.Modules.Auth.Controllers
 
             if (!_authService.Validate(authRegisterDto))
             {
-                return BadRequest(_userService.Errors);
+                return BadRequest(_authService.Errors);
             }
 
             var user = await _authService.Register(authRegisterDto);

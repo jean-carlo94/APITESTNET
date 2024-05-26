@@ -30,6 +30,19 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ApiCorsPolicy",
+        builder => builder
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .WithExposedHeaders("Content-Disposition")
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
+});
+
 // Database Conection
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -88,7 +101,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(config =>
 {
-    config.SwaggerDoc("v1", new() { Title = "Pappa´s API", Version = "v1" });
+    config.SwaggerDoc("v1", new() { Title = "CCL TEST API", Version = "v1" });
 
     // Define the OAuth2.0 scheme that's in use (i.e., Implicit Flow)
     config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -129,6 +142,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("ApiCorsPolicy");
 
 app.UseAuthorization();
 
