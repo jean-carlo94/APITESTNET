@@ -35,7 +35,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-//Auth
+//AuthJWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -59,6 +59,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 //Validators
 builder.Services.AddScoped<IValidator<UserInsertDto>, UserInsertValidator>();
 builder.Services.AddScoped<IValidator<UserUpdateDto>, UserUpdateValidator>();
+builder.Services.AddScoped<IValidator<AuthRegisterDto>, AuthRegisterValidator>();
 builder.Services.AddScoped<IValidator<AuthLoginDto>, AuthLoginValidator>();
 builder.Services.AddScoped<IValidator<ProductCategoryInsertDto>, ProductCategoryInsertValidator>();
 builder.Services.AddScoped<IValidator<ProductCategoryUpdateDto>, ProductCategoryUpdateValidator>();

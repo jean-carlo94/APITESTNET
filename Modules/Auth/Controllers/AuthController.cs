@@ -17,36 +17,59 @@ namespace APITEST.Modules.Auth.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IValidator<AuthLoginDto> _authLoginValidator;
+        private readonly IValidator<AuthRegisterDto> _authRegisterValidator;
         private readonly IAuthService _authService;
         private readonly ICommonService<UserDto, UserInsertDto, UserUpdateDto> _userService;
 
         public AuthController(
             IValidator<AuthLoginDto> authLoginValidator,
+            IValidator<AuthRegisterDto> authRegisterValidator,
             IAuthService authService,
             [FromKeyedServices("userService")] ICommonService<UserDto, UserInsertDto, UserUpdateDto> userService
         ) 
         { 
             _authLoginValidator = authLoginValidator;
+            _authRegisterValidator = authRegisterValidator;
             _authService = authService;
             _userService = userService;
         }
 
-        [HttpPost("Login")]
-        public async Task<ActionResult<AuthDto>> Login(AuthLoginDto loginDto)
+        [HttpPost("Register")]
+        public async Task<ActionResult<AuthDto>> Register(AuthRegisterDto authRegisterDto)
         {
-            var validationResult = await _authLoginValidator.ValidateAsync(loginDto);
+            var validationResult = await _authRegisterValidator.ValidateAsync(authRegisterDto);
 
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors);
             }
 
-            if (!_authService.Validate(loginDto))
+            if (!_authService.Validate(authRegisterDto))
+            {
+                return BadRequest(_userService.Errors);
+            }
+
+            var user = await _authService.Register(authRegisterDto);
+
+            return CreatedAtAction(nameof(Check), new { id = user.Id }, user);
+        }
+
+        [HttpPost("Login")]
+        public async Task<ActionResult<AuthDto>> Login(AuthLoginDto authLoginDto)
+        {
+            var validationResult = await _authLoginValidator.ValidateAsync(authLoginDto);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
+            if (!_authService.Validate(authLoginDto))
             {
                 return Unauthorized(_authService.Errors);
             }
 
-            var login = await _authService.Login(loginDto);
+            var login = await _authService.Login(authLoginDto);
             return login;
         }
 

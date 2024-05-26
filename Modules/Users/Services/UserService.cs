@@ -96,7 +96,7 @@ namespace APITEST.Modules.Users.Services
         {
             if (
                 _userRepository.Search(
-                    user => user.Email == userInserDto.Email
+                    user => user.Email == userInserDto.Email.ToLower()
                 )
                 .Count() > 0 
             )
@@ -110,7 +110,7 @@ namespace APITEST.Modules.Users.Services
         public bool Validate(UserUpdateDto userUpdateDto)
         {
             if (_userRepository.Search(
-                user => user.Email == userUpdateDto.Email 
+                user => user.Email == userUpdateDto.Email.ToLower()
                 && userUpdateDto.Id != user.Id                
                 )
                 .Count() > 0
