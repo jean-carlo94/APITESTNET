@@ -1,5 +1,5 @@
-﻿using APITEST.Modules.Users.DTOs;
-using FluentValidation;
+﻿using FluentValidation;
+using APITEST.Modules.Users.DTOs;
 
 namespace APITEST.Modules.Users.Validators
 {

@@ -1,7 +1,7 @@
-﻿using APITEST.Common.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
 using APITEST.Data;
+using APITEST.Common.Interfaces;
 using APITEST.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace APITEST.Modules.Users.Repository
 {
@@ -17,8 +17,8 @@ namespace APITEST.Modules.Users.Repository
         public async Task<IEnumerable<User>> GetAll() => 
             await _context.Users.ToListAsync();
 
-        public async Task<User> GetById(int id) => 
-            await _context.Users.FindAsync(id);
+        public async Task<User> GetById(int Id) => 
+            await _context.Users.FindAsync(Id);
 
         public async Task Create(User user) => 
             await _context.Users.AddAsync(user);

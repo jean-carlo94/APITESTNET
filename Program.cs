@@ -7,6 +7,11 @@ using APITEST.Modules.Auth.Interfaces;
 using APITEST.Modules.Auth.Services;
 using APITEST.Modules.Auth.Validators;
 using APITEST.Modules.ProductCategories.Validators;
+using APITEST.Modules.Products.Automappers;
+using APITEST.Modules.Products.DTOs;
+using APITEST.Modules.Products.Repository;
+using APITEST.Modules.Products.Services;
+using APITEST.Modules.Products.Validators;
 using APITEST.Modules.ProductsCategory.Automappers;
 using APITEST.Modules.ProductsCategory.DTOs;
 using APITEST.Modules.ProductsCategory.Repository;
@@ -57,19 +62,24 @@ builder.Services.AddScoped<IValidator<UserUpdateDto>, UserUpdateValidator>();
 builder.Services.AddScoped<IValidator<AuthLoginDto>, AuthLoginValidator>();
 builder.Services.AddScoped<IValidator<ProductCategoryInsertDto>, ProductCategoryInsertValidator>();
 builder.Services.AddScoped<IValidator<ProductCategoryUpdateDto>, ProductCategoryUpdateValidator>();
+builder.Services.AddScoped<IValidator<ProductInsertDto>, ProductInsertValidator>();
+builder.Services.AddScoped<IValidator<ProductUpdateDto>, ProductUpdateValidator>();
 
 //Mappers
 builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddAutoMapper(typeof(AuthMappingProfile));
 builder.Services.AddAutoMapper(typeof(ProductCategoriesMappingProfile));
+builder.Services.AddAutoMapper(typeof(ProductMappingProfile));
 
 //Services
 builder.Services.AddKeyedScoped<ICommonService<UserDto, UserInsertDto, UserUpdateDto>, UserService>("userService");
 builder.Services.AddKeyedScoped<ICommonService<ProductCategoryDto, ProductCategoryInsertDto, ProductCategoryUpdateDto>, ProductCategoryService>("productCategoryService");
+builder.Services.AddKeyedScoped<ICommonService<ProductDto, ProductInsertDto, ProductUpdateDto>, ProductService>("productService");
 
 //Repository
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IRepository<ProductCategory>, ProductCategoryRepository>();
+builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
 
 //Controller
 builder.Services.AddControllers();

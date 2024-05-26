@@ -1,7 +1,7 @@
-﻿using APITEST.Common.Utils;
+﻿using AutoMapper;
+using APITEST.Common.Utils;
 using APITEST.Models;
 using APITEST.Modules.Users.DTOs;
-using AutoMapper;
 
 namespace APITEST.Modules.Users.Automappers
 {

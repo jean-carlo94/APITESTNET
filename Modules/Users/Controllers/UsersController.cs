@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using APITEST.Modules.Users.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using FluentValidation;
 using APITEST.Common.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using APITEST.Modules.Users.DTOs;
 
 namespace APITEST.Modules.Users.Controllers
 {

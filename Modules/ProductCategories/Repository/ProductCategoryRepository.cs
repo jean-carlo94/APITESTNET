@@ -1,8 +1,7 @@
-﻿using APITEST.Common.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using APITEST.Common.Interfaces;
 using APITEST.Data;
 using APITEST.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace APITEST.Modules.ProductsCategory.Repository
 {
@@ -13,11 +12,12 @@ namespace APITEST.Modules.ProductsCategory.Repository
         public ProductCategoryRepository(AppDbContext context) {
             _context = context;
         }
+
         public async Task<IEnumerable<ProductCategory>> GetAll() =>
             await _context.ProductCategories.ToListAsync();
 
         public async Task<ProductCategory> GetById(int Id) =>
-            await _context.ProductCategories.FirstOrDefaultAsync(productCategory => productCategory.Id == Id);
+            await _context.ProductCategories.FindAsync(Id);
 
         public async Task Create(ProductCategory productCategory) =>
             await _context.ProductCategories.AddAsync(productCategory);
@@ -27,8 +27,9 @@ namespace APITEST.Modules.ProductsCategory.Repository
             _context.ProductCategories.Attach(productCategory);
             _context.ProductCategories.Entry(productCategory).State = EntityState.Modified;
         }
-        public void Delete(ProductCategory productCategory) 
-            => _context.ProductCategories.Remove(productCategory);
+
+        public void Delete(ProductCategory productCategory) => 
+            _context.ProductCategories.Remove(productCategory);
 
         public async Task Save() => await _context.SaveChangesAsync();
 

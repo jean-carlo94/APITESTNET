@@ -1,8 +1,8 @@
-﻿using APITEST.Common.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using APITEST.Common.Interfaces;
 using APITEST.Models;
 using APITEST.Modules.Users.DTOs;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace APITEST.Modules.Users.Services
 {

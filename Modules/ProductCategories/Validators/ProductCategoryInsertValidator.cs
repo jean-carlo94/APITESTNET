@@ -1,9 +1,9 @@
-﻿using APITEST.Modules.ProductsCategory.DTOs;
-using FluentValidation;
+﻿using FluentValidation;
+using APITEST.Modules.ProductsCategory.DTOs;
 
 namespace APITEST.Modules.ProductCategories.Validators
 {
-    public class ProductCategoryInsertValidator: AbstractValidator<ProductCategoryInsertDto>
+    public class ProductCategoryInsertValidator : AbstractValidator<ProductCategoryInsertDto>
     {
         public ProductCategoryInsertValidator() {
             RuleFor(x => x.Name)

@@ -1,17 +1,14 @@
-﻿using APITEST.Common.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using APITEST.Common.Interfaces;
 using APITEST.Models;
 using APITEST.Modules.ProductsCategory.DTOs;
-using APITEST.Modules.Users.DTOs;
-using APITEST.Modules.Users.Repository;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace APITEST.Modules.ProductsCategory.Services
 {
     public class ProductCategoryService : ICommonService<ProductCategoryDto, ProductCategoryInsertDto, ProductCategoryUpdateDto>
     {
         private readonly IRepository<ProductCategory> _productCategoryRepository;
-
         private readonly IMapper _mapper;
         public List<string> Errors { get; }
 
@@ -102,7 +99,7 @@ namespace APITEST.Modules.ProductsCategory.Services
         {
             if (
                 _productCategoryRepository.Search(
-                    productCategory => productCategory.Name == productCategoryInsert.Name
+                    productCategory => productCategory.Name == productCategoryInsert.Name.ToUpper()
                 )
                 .Count() > 0
             )
@@ -116,7 +113,7 @@ namespace APITEST.Modules.ProductsCategory.Services
         public bool Validate(ProductCategoryUpdateDto productCategoryUpdate)
         {
             if (_productCategoryRepository.Search(
-                productCategory => productCategory.Name == productCategoryUpdate.Name
+                productCategory => productCategory.Name == productCategoryUpdate.Name.ToUpper()
                 && productCategoryUpdate.Id != productCategory.Id
                 )
                 .Count() > 0

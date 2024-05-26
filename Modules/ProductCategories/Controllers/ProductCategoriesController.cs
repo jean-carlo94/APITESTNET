@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using APITEST.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using APITEST.Modules.ProductsCategory.DTOs;
-using APITEST.Modules.Users.DTOs;
+using APITEST.Common.Interfaces;
 using FluentValidation;
-using APITEST.Modules.Users.Validators;
+using APITEST.Modules.ProductsCategory.DTOs;
 
 namespace APITEST.Modules.ProductsCategory.Controllers
 {
@@ -27,12 +25,12 @@ namespace APITEST.Modules.ProductsCategory.Controllers
             _productCategoryService = productCategoryService;
         }
 
-        // GET: api/ProducsCategory
+        // GET: api/ProductCategories
         [HttpGet]
         [Authorize]
         public async Task<IEnumerable<ProductCategoryDto>> GetProductCategories() => await _productCategoryService.FindAll();
 
-        // GET: api/ProducsCategory/5
+        // GET: api/ProductCategories/5
         [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<ProductCategoryDto>> GetProductCategory(int id)
@@ -45,7 +43,7 @@ namespace APITEST.Modules.ProductsCategory.Controllers
                         Ok(productCategory);
         }
 
-        // POST: api/ProducsCategory
+        // POST: api/ProductCategories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize]
@@ -68,7 +66,7 @@ namespace APITEST.Modules.ProductsCategory.Controllers
             return CreatedAtAction(nameof(GetProductCategories), new { id = user.Id }, user);
         }
 
-        // PUT | PATCH: api/ProducsCategory/5
+        // PUT | PATCH: api/ProductCategories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [HttpPatch("{id}")]
@@ -95,7 +93,7 @@ namespace APITEST.Modules.ProductsCategory.Controllers
                         Ok(productCategory);
         }
 
-        // DELETE: api/ProducsCategory/5
+        // DELETE: api/ProductCategories/5
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<ActionResult> DeleteProductCategory(int id)
